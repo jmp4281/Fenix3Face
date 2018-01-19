@@ -47,15 +47,15 @@ class watch_faceView extends Ui.WatchFace {
         		hour=12;
         	}
         }
-
+        
         dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_BLACK);
-        dc.drawText(dc.getWidth()/2, 24, customFont, hour.toString(), Gfx.TEXT_JUSTIFY_RIGHT);
+        dc.drawText(dc.getWidth()/2, 24, customFont, Lang.format("$1$", [hour.format("%02d")]), Gfx.TEXT_JUSTIFY_RIGHT);
         dc.setColor(Gfx.COLOR_RED, Gfx.COLOR_BLACK);
         dc.drawText(dc.getWidth()/2, 24, customFont, Lang.format("$1$", [clockTime.min.format("%02d")]), Gfx.TEXT_JUSTIFY_LEFT);
      }
 
 	
-	function getSpanishMont(month)
+	function getSpanishMonth(month)
     { 
 	    switch(month)
 	    {   
@@ -79,7 +79,7 @@ class watch_faceView extends Ui.WatchFace {
       	var clockTime = Sys.getClockTime();
         var local_now = Time.now();
     	var today = Gregorian.info(local_now, Time.FORMAT_SHORT	);
-	    var dateString = today.day + getSpanishMont(today.month);
+	    var dateString = today.day + getSpanishMonth(today.month);
 	    Sys.println(dateString);
      
 	    dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_BLACK);
