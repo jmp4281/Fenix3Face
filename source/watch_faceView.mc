@@ -4,14 +4,22 @@ using Toybox.System as Sys;
 using Toybox.Lang as Lang;
 using Toybox.Time.Gregorian;
 using Toybox.AntPlus as AntPlus;
+using Toybox.ActivityMonitor;
+using Toybox.System;
 
 class watch_faceView extends Ui.WatchFace {
 
     var customFont=null;
     var consolasFont=null;
+    var heartRate = null;
 
     function initialize() {
         WatchFace.initialize();
+    }
+
+    function onSensor(sensorInfo) {
+        heartRate = sensorInfo.heartRate;
+        System.println("Heart Rate: " + sensorInfo.heartRate);
     }
 
     // Load your resources here
@@ -33,6 +41,7 @@ class watch_faceView extends Ui.WatchFace {
         ShowCurrentTime(dc);
         ShowDate(dc);
         ShowBatteryStatus(dc);
+        ShowHeartRate(dc);
     }
        
     function ShowCurrentTime(dc)
@@ -105,9 +114,59 @@ class watch_faceView extends Ui.WatchFace {
         }
 
 	    dc.setColor(color, Gfx.COLOR_BLACK);
-
-	    dc.drawText(dc.getWidth()/2, 152, consolasFont, batStr,  Gfx.TEXT_JUSTIFY_CENTER);
+	    dc.drawText(170, 152, consolasFont, batStr,  Gfx.TEXT_JUSTIFY_LEFT);
     }
+
+    function ShowHeartRate(dc)
+    {
+
+        var hrIterator = ActivityMonitor.getHeartRateHistory(1, true); //pido dos
+        var sample = hrIterator.next();
+   
+        if (sample.heartRate != ActivityMonitor.INVALID_HR_SAMPLE)    // check for invalid samples
+        {
+            var lastSampleTime = sample.when;
+            System.println("Sample: " + sample.heartRate);      // print the current sample
+            System.println("lastSampleTime: " + lastSampleTime);      // print the current sample
+        
+        }
+
+   
+        // get ActivityMonitor info
+        var info = ActivityMonitor.getInfo();
+
+        var steps = info.steps;
+        var calories = info.calories;
+
+        System.println("You have taken: " + steps +
+                    " steps and burned: " + calories + " calories!");
+
+        var hrRate = sample.heartRate;
+
+        var color = Gfx.COLOR_LT_GRAY;
+
+        //Supongo mi HR maximo = 180
+        if(hrRate >= 162)
+        {
+            color = Gfx.COLOR_RED;
+        }
+        else if( hrRate < 162 && hrRate>= 144)        
+        {
+            color = Gfx.COLOR_ORANGE;
+        }
+        else if( hrRate < 144 && hrRate>= 126)        
+        {
+            color = Gfx.COLOR_RED;
+        }else if( hrRate < 126 && hrRate>= 108)        
+        {
+            color = Gfx.COLOR_BLUE;
+        }
+
+        dc.setColor(color, Gfx.COLOR_BLACK);
+        var hrText = "HR: " + hrRate;
+        dc.drawText(35, 152, consolasFont, hrText,  Gfx.TEXT_JUSTIFY_LEFT);
+     }
+
 
 
     // Called when this View is removed from the screen. Save the
