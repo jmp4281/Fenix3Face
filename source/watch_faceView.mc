@@ -56,7 +56,7 @@ class watch_faceView extends Ui.WatchFace {
 
         dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
         dc.clear();
-        
+        dc.clear();
         ShowCurrentTime(dc);
         ShowDate(dc);
         ShowBatteryStatus(dc);
